@@ -1,10 +1,10 @@
 const produits = [
   { nom: "Clavier", quantite: 5 },
   { nom: "Souris", quantite: 8 },
-  { nom: "Écran", quantite: 3 }
+  { nom: "Ecran", quantite: 3 }
 ];
 
-const liste = document.querySelector("#liste-produit");
+const liste = document.querySelector("#liste-produits");
 const formulaire = document.querySelector("#formulaire");
 const champNom = document.querySelector("#nom");
 const champQuantite = document.querySelector("#quantite");
@@ -19,21 +19,22 @@ function afficherProduits() {
     return produit.nom.toLowerCase().includes(recherche);
   });
 
-  resultats.forEach(function (produit) {
-    const element = document.createElement("li");
-    element.textContent = produit.nom + " — Quantité : " + produit.quantite;
-    liste.appendChild(element);
-  });
-
-  if (resultats.length === 0) {
+  if (resultats.length < 1) {
     const element = document.createElement("li");
     element.textContent = "Aucun matériel trouvé";
     liste.appendChild(element);
   }
+  else {
+    resultats.forEach(function (produit) {
+      const element = document.createElement("li");
+      element.textContent = produit.nom + " — Quantité : " + produit.quantite;
+      liste.appendChild(element);
+    });
+  }
 
   let quantiteTotale = 0;
   produits.forEach(function (produit) {
-    quantiteTotale = quantiteTotale + produit.quantite;
+    quantiteTotale += produit.quantite;
   });
   total.textContent = quantiteTotale;
 }
@@ -43,7 +44,7 @@ formulaire.addEventListener("submit", function (event) {
   const nom = champNom.value.trim();
   const quantite = champQuantite.value;
 
-  if (nom === "" && champQuantite.value === "") {
+  if (nom === "" || quantite === "") {
     message.textContent = "Renseignez le nom et la quantité.";
     return;
   }
@@ -53,11 +54,12 @@ formulaire.addEventListener("submit", function (event) {
     return;
   }
 
-  produits.push({ nom: nom, quantite: quantite });
+  produits.push({ nom: nom, quantite: Number(quantite) });
   message.textContent = "Matériel ajouté.";
   formulaire.reset();
   champRecherche.value = "";
+  afficherProduits();
 });
 
-champRecherche.addEventListener("change", afficherProduits);
+champRecherche.addEventListener("input", afficherProduits);
 afficherProduits();
