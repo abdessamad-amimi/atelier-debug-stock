@@ -1,12 +1,13 @@
 # Journal de débogage
-Nom : ....................................
+Nom : Abdessamad Amimi
 
 | N° | Action pour reproduire | Résultat attendu / obtenu | Hypothèse et cause identifiée | Correction | Test après correction |
 | --- | --- | --- | --- | --- | --- |
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | Ouvrir la page, remplir le formulaire et ajouter un produit | Attendu : le produit apparaît dans la liste. Obtenu : rien ne s'affiche et la console signale une erreur (`liste` vaut `null`) | Hypothèse : le sélecteur ne trouve pas l'élément. Cause : le JS cherche `#liste-produit` alors que l'id dans le HTML est `#liste-produits` (un « s » manquant) | `document.querySelector("#liste-produits")` | `console.log(liste)` renvoie bien l'élément, plus d'erreur dans la console |
+| 2 | Cliquer sur « Ajouter » avec le nom vide, ou avec la quantité vide | Attendu : l'ajout est refusé. Obtenu : le produit est ajouté quand un seul champ est vide | Hypothèse : la condition de validation est mal écrite. Cause : l'opérateur `&&` exige que les deux champs soient vides, et `champQuantite` (l'élément HTML) est comparé à `""` au lieu de la valeur `quantite` | `if (nom === "" \|\| quantite === "")` | Nom vide : refusé. Quantité vide : refusée. Les deux vides : refusé. Les deux remplis : accepté |
+| 3 | Ajouter un produit valide | Attendu : il s'affiche tout de suite. Obtenu : la liste ne change pas (le produit est dans le tableau mais pas à l'écran) | Hypothèse : l'affichage n'est pas rafraîchi. Cause : `afficherProduits()` n'est pas appelée après `produits.push(...)` | Ajouter l'appel à `afficherProduits()` juste après l'ajout au tableau | Ajout de 2 produits à la suite : chacun apparaît immédiatement |
+| 4 | Taper une lettre dans le champ de recherche | Attendu : la liste se filtre à chaque frappe. Obtenu : le filtre ne s'applique qu'en quittant le champ | Hypothèse : mauvais événement. Cause : `change` ne se déclenche qu'à la perte du focus, alors que `input` se déclenche à chaque modification | `champRecherche.addEventListener("input", afficherProduits)` | Taper « po » filtre la liste en direct, effacer le texte réaffiche tous les produits |
+| 5 | Ajouter un produit avec une quantité (ex. 3), puis utiliser cette quantité dans un calcul ou un tri | Attendu : un nombre (3). Obtenu : le texte `"3"`, donc `"3" + "2"` donne `"32"` au lieu de 5 | Hypothèse : mauvais type de donnée. Cause : `input.value` renvoie toujours une chaîne de caractères | `produits.push({ nom: nom, quantite: Number(quantite) })` | `typeof produits[0].quantite` renvoie `"number"` et 3 + 2 donne 5 |
 
 Bilan : quelle méthode réutiliserai-je sur mon prochain brief ?
+Je reproduirai d'abord le bug de façon précise, puis j'ouvrirai la console du navigateur pour lire le message d'erreur. Je vérifierai les variables avec `console.log` et `typeof` (élément ou valeur, texte ou nombre) et je comparerai les noms utilisés en JS avec les ids du HTML. Je corrigerai un seul problème à la fois et je le retesterai tout de suite, pour savoir quelle correction a réglé quel bug.
